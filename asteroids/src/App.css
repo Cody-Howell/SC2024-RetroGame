@@ -1,6 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 #App {
@@ -25,4 +26,41 @@ h1 {
 #game {
   background-color: black;
   height: 100%;
+  color: white;
+  justify-content: start;
+  overflow: hidden;
+}
+
+#score {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 10px;
+}
+
+#startGame, #stopGame {
+  margin: 0;
+  position: absolute;
+  top: 100px;
+  left: 10px;
+}
+
+.player {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  font-size: 20px;
+}
+
+.asteroid {
+  position: absolute;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.bullet {
+  position: absolute;
+  background-color: white;
+  width: 2px;
+  height: 2px;
 }
