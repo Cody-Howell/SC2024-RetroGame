@@ -1,0 +1,52 @@
+body, html {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+body {height: 100vh;}
+#root {height: 100%;}
+
+#App {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  display: grid;
+  grid-template-columns: 1fr 800px 1fr;
+  grid-template-rows: 1fr 700px 1fr;
+  grid-template-areas: "a b c"
+                       "d e f"
+                       "g h i";
+}
+
+#title {
+  grid-area: b;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+  
+#infoArea {
+  grid-area: d;
+  padding-left: 10px;
+  color: white;
+}
+a {color: rgb(165, 43, 240);}
+
+#tetris {
+  grid-area: e;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+}
+
+#tetrisBoard {
+  width: 310px;
+  height: 620px;
+  background-color: pink;
+  border: 5px solid gray;
+  border-radius: 10px;
+}
