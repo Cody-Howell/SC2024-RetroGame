@@ -19,10 +19,11 @@ class Asteroids {
     this.timeSinceAsteroid = 0;
     this.timeSinceBullet = 0;
     this.player = {
-      x: -10,
-      y: -10,
+      x: 0,
+      y: 0,
       momX: 0,
       momY: 0,
+      momRot: 0,
       orientation: 0,
       value: 0
     }
@@ -91,11 +92,12 @@ class Asteroids {
     // Updates X and Y and wraps around. 
     object.x = this.wrapAround((object.x + object.momX), this.width);
     object.y = this.wrapAround((object.y + object.momY), this.height);
+    object.orientation = this.wrapAround((object.orientation + object.momRot), 360);
     return object;
   }
 
   wrapAround(current: number, max: number): number {
-    if (current < 0) { return max - current; }
+    if (current < 0) { return max + current; }
     if (current > max) { return current - max; }
     return current;
   }
@@ -140,6 +142,8 @@ class Asteroids {
       this.asteroids.push(asteroid);
       asteroid2.momX += randFloatBetween(-1.5, 1.5);
       asteroid2.momY += randFloatBetween(-1.5, 1.5);
+      asteroid2.orientation = randNumberBetween(0, 360);
+      asteroid2.momRot = randNumberBetween(-1, 1);
       this.asteroids.push(asteroid2);
     }
   }
@@ -151,9 +155,9 @@ class Asteroids {
       y: 0,
       momX: 0,
       momY: 0,
-      orientation: 0,
-      // value: randNumberBetween(2, 4)
-      value: 3
+      momRot: randNumberBetween(-1, 2),
+      orientation: randNumberBetween(0, 360),
+      value: randNumberBetween(2, 4)
     }
 
     if (rand < 0.25) { // Top
@@ -183,12 +187,13 @@ class Asteroids {
   spawnBullet() {
     const scalar = 10;
     let bulletObject: GameObject = {
-      x: this.player.x + 10,
+      x: this.player.x + 7,
       y: this.player.y + 10,
       momX: Math.sin((this.player.orientation) * Math.PI / 180) * scalar + this.player.momX / 2,
       momY: -1 * Math.cos((this.player.orientation) * Math.PI / 180) * scalar + this.player.momY / 2,
+      momRot: 0,
       orientation: 0,
-      value: -100
+      value: -150
     }
     this.timeSinceBullet = 0;
     this.bullets.push(bulletObject);
@@ -199,11 +204,13 @@ class Asteroids {
     this.asteroids = [];
     this.bullets = [];
     this.started = true;
+    this.timeSinceAsteroid = 0;
     this.player = {
       x: this.width / 2,
       y: this.height / 2,
       momX: 0,
       momY: 0,
+      momRot: 0,
       orientation: 0,
       value: 0
     }
@@ -212,7 +219,8 @@ class Asteroids {
 
   stopGame() {
     this.started = false;
-    console.log("Finished Start Game, game state is: " + this.started);
+    this.bullets = [];
+    console.log("Finished Stop Game, game state is: " + this.started);
   }
 
 }
@@ -222,6 +230,7 @@ type GameObject = {
   y: number,
   momX: number,
   momY: number,
+  momRot: number,
   orientation: number,
   value: number
 }
@@ -242,4 +251,4 @@ function randFloatBetween(x: number, y: number): number {
   return Math.random() * (y - x) + x;
 }
 
-export default Asteroids;
+export { Asteroids, randNumberBetween };

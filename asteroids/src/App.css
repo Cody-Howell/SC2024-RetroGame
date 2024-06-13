@@ -55,17 +55,35 @@ a {
   color: gray;
 }
 
-.player {
-  margin: 0;
-  padding: 0;
+#leaderboard {
   position: absolute;
-  font-size: 20px;
+  border: 2px solid white;
+  width: 275px;
+  top: 0;
+}
+#leaderboard h2 {
+  padding: 5px 0;
+  margin: 0;
+}
+#leaderboard p {
+  padding-bottom: 4px;
+  margin: 0;
+}
+
+.player {
+  position: absolute;
+  background-image: url('./Spaceship.png');
+  background-size: contain;
+  background-repeat: round;
+  width: 15px;
+  height: 20px;
 }
 
 .asteroid {
   position: absolute;
-  border: 2px solid white;
-  border-radius: 50%;
+  background-image: url('./Asteroid.png');
+  background-size: contain;
+  background-repeat: round;
 }
 
 .bullet {
@@ -73,6 +91,13 @@ a {
   background-color: white;
   width: 2px;
   height: 2px;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  width: 1px;
+  height: 1px;
 }
 
 .animated-element {

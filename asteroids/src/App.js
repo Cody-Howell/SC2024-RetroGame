@@ -1,14 +1,11 @@
 import React from 'react';
 import './App.css';
-import Asteroids from './logic/Asteroids.ts';
+import { Asteroids, randNumberBetween } from './logic/Asteroids.ts';
 
 class App extends React.Component {
   render() {
     return (
       <div id="App">
-        <header>
-          <h1>Asteroids</h1>
-        </header>
         <ReactAsteroids />
       </div>
     );
@@ -22,7 +19,9 @@ class ReactAsteroids extends React.Component {
       game: new Asteroids(),
       pressedKeys: new Set(),
       animationTriggered: false,
-      position: { x: 0, y: 0 }
+      position: { x: 0, y: 0 }, 
+      leaderboard: [],
+      stars: []
     };
     this.divRef = React.createRef();
   }
@@ -77,7 +76,17 @@ class ReactAsteroids extends React.Component {
   startGame = () => {
     let startedGame = this.state.game;
     startedGame.startGame();
-    this.setState({ game: startedGame, position: {x: 0, y: 0} });
+
+    let stars = [];
+    for (let i = 0; i < 20; i++){
+      stars.push({
+        x: randNumberBetween(0, startedGame.width),
+        y: randNumberBetween(0, startedGame.height),
+        orientation: 0, 
+        value: 0
+      })
+    }
+    this.setState({ game: startedGame, position: {x: 0, y: 0}, stars: stars });
     const TICKS_PER_SECOND = 20;
     this.timer = setInterval(() => this.updateGame(), 1000 / TICKS_PER_SECOND);
   }
@@ -88,7 +97,7 @@ class ReactAsteroids extends React.Component {
     if (died) {
       updatedGame.player.x = updatedGame.player.y = 0;
     }
-    this.setState({ game: updatedGame, character: "" });
+    this.setState({ game: updatedGame });
     clearInterval(this.timer);
   }
 
@@ -98,25 +107,54 @@ class ReactAsteroids extends React.Component {
     if (!alive) {
       let coordinates = [updatedGame.player.x, updatedGame.player.y];
       this.stopGame(true);
+      let scores = this.state.leaderboard;
+      scores.push(updatedGame.score);
+      scores = this.sortAndTruncate(scores);
+      this.setState({leaderboard: scores});
       // Ending animation
       this.triggerAnimation(coordinates[0], coordinates[1]);
-      // Play ending transition, not sure how it will work yet. Update state to wherever
       return;
     }
-    this.setState({ game: updatedGame, character: "" });
+    this.setState({ game: updatedGame });
+  }
+
+  sortAndTruncate = (array) => {
+    let newArray = [];
+    for (let i = 0; i < 3; i++){
+      let largest = 0;
+      for (let j = 0; j < array.length; j++){
+        if (array[j] > array[largest]){
+          largest = j;
+        }
+      }
+      if (array[largest] !== undefined){
+        newArray.push(array[largest]);
+      }
+      array.splice(largest, 1);
+    }
+    return newArray;
   }
 
   render() {
     let game = this.state.game;
     let asteroids = [];
     for (let i = 0; i < game.asteroids.length; i++) {
-      asteroids.push(<GameObject class={"asteroid"} object={game.asteroids[i]} character={""} key={i + "asteroid"}/>)
+      asteroids.push(<GameObject class={"asteroid"} object={game.asteroids[i]} key={i + "asteroid"}/>)
     }
     let bullets = [];
     for (let i = 0; i < game.bullets.length; i++) {
-      bullets.push(<GameObject class={"bullet"} object={game.bullets[i]} character={""} key={i + "bullet"}/>)
+      bullets.push(<GameObject class={"bullet"} object={game.bullets[i]} key={i + "bullet"}/>)
     }
+    let stars = [];
+    for (let i = 0; i < this.state.stars.length; i++) {
+      stars.push(<GameObject class={"star"} object={this.state.stars[i]} key={i + "star"}/>)
+    }
+
     return(
+      <>
+      <header>
+        <h1>Asteroids</h1>
+      </header>
       <div id='game' ref={this.divRef} tabIndex={0}>
         <div id='infoArea'>
           <p>Developed by <a href='https://codyhowell.dev'>Cody Howell</a></p>
@@ -124,16 +162,20 @@ class ReactAsteroids extends React.Component {
           <p>Score: {this.state.game.score} | Asteroids: {game.asteroids.length}</p>
           {game.started ? (<p id='stopGame' onClick={this.stopGame}>Stop Game</p>) : (<p id='startGame' onClick={this.startGame}>Start Game</p>)}
         </div>
-        <GameObject class={"player"} object={game.player} character={"player"} />
+        <GameObject class={"player"} object={game.player} />
         {asteroids}
         {bullets}
+        {stars}
 
         <div
           className={`animated-element ${this.state.animationTriggered ? 'animate' : ''}`}
           style={{ top: this.state.position.y, left: this.state.position.x }}
-        />
+          />
+
+        <Leaderboard scores={this.state.leaderboard} end={this.state.game.width}/>
         
       </div>
+      </>
     )
   }
 }
@@ -148,8 +190,21 @@ class GameObject extends React.Component {
       }
     }
     return(
-      <div className={this.props.class} style={style}>
-        {this.props.character !== "" && (<span>&#11165;</span>)}
+      <div className={this.props.class} style={style} />
+    )
+  }
+}
+
+class Leaderboard extends React.Component {
+  render() {
+    let scores = [];
+    for (let i = 0; i < this.props.scores.length; i++){
+      scores.push(<p className='score'>Score: {this.props.scores[i]}</p>)
+    }
+    return(
+      <div id='leaderboard' style={{"left": this.props.end - 279}}>
+        <h2>Session Leaderboard</h2>
+        {scores}
       </div>
     )
   }
