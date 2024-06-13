@@ -33,7 +33,7 @@ class Asteroids {
       this.handleControls(char);
     }
 
-    // Every 10 ticks see if an asteroid should be spawned
+    // Every 10 ticks see if an asteroid should be spawned after 100 ticks
     if (this.timeSinceAsteroid > 100 &&
       this.timeSinceAsteroid % 10 === 0 &&
       Math.random() < 0.75) {
@@ -45,7 +45,12 @@ class Asteroids {
       this.asteroids[i] = this.applyMomentum(this.asteroids[i]);
     }
     for (let i = 0; i < this.bullets.length; i++) {
-      this.bullets[i] = this.applyMomentum(this.bullets[i]);
+      this.bullets[i].value += 1;
+      if (this.bullets[i].value < 0){
+        this.bullets[i] = this.applyMomentum(this.bullets[i]);
+      } else {
+        this.bullets.splice(i, 1);
+      }
     }
 
     this.collideBullets();
@@ -76,7 +81,7 @@ class Asteroids {
       this.player.momX -= xMomentum;
       this.player.momY += yMomentum;
     } else if (char === " ") { // Spacebar
-      if (this.timeSinceBullet > 20) {
+      if (this.timeSinceBullet > 10) {
         this.spawnBullet();
       }
     }
@@ -105,6 +110,7 @@ class Asteroids {
         let actualDistance = Math.sqrt(Math.pow((bullet.x - (asteroid.x + 7.5 * asteroid.value)), 2) + Math.pow((bullet.y - (asteroid.y + 7.5 * asteroid.value)), 2));
         if (actualDistance < insideDistance){
           this.splitAsteroid(i, j);
+          this.score += (3 - asteroid.value) * 10;
         }
       }
     }
@@ -114,7 +120,7 @@ class Asteroids {
     for (let i = 0; i < this.asteroids.length; i++) {
       let asteroid = this.asteroids[i];
       let insideDistance = asteroid.value * 15;
-      let actualDistance = Math.sqrt(Math.pow((this.player.x - (asteroid.x + 7.5 * asteroid.value)), 2) + Math.pow((this.player.y - (asteroid.y + 7.5 * asteroid.value)), 2));
+      let actualDistance = Math.sqrt(Math.pow((this.player.x - (asteroid.x + 2.5 * asteroid.value)), 2) + Math.pow((this.player.y - (asteroid.y + 2.5 * asteroid.value)), 2));
       if (actualDistance < insideDistance) {
         return true;
       }
@@ -146,7 +152,8 @@ class Asteroids {
       momX: 0,
       momY: 0,
       orientation: 0,
-      value: randNumberBetween(2, 4)
+      // value: randNumberBetween(2, 4)
+      value: 3
     }
 
     if (rand < 0.25) { // Top
@@ -181,7 +188,7 @@ class Asteroids {
       momX: Math.sin((this.player.orientation) * Math.PI / 180) * scalar + this.player.momX / 2,
       momY: -1 * Math.cos((this.player.orientation) * Math.PI / 180) * scalar + this.player.momY / 2,
       orientation: 0,
-      value: 0
+      value: -100
     }
     this.timeSinceBullet = 0;
     this.bullets.push(bulletObject);

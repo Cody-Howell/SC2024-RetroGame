@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: "Inter", sans-serif;
 }
 
 #App {
@@ -31,18 +32,27 @@ h1 {
   overflow: hidden;
 }
 
-#score {
+#infoArea {
   margin: 0;
   position: absolute;
   top: 0;
-  left: 10px;
+  left: 0;
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-color: black;
+  z-index: 10;
+}
+#infoArea p {
+  margin: 0;
+  padding: 2px;
+}
+#startGame, #stopGame {
+  border: 1px solid white;
+  cursor: pointer;
 }
 
-#startGame, #stopGame {
-  margin: 0;
-  position: absolute;
-  top: 100px;
-  left: 10px;
+a {
+  color: gray;
 }
 
 .player {
@@ -63,4 +73,18 @@ h1 {
   background-color: white;
   width: 2px;
   height: 2px;
+}
+
+.animated-element {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,0,0,1) 100%);
+  transition: transform 0.75s;
+}
+
+.animated-element.animate {
+  transform: scale(10);
 }

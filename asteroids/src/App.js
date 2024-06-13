@@ -20,7 +20,9 @@ class ReactAsteroids extends React.Component {
     super(props);
     this.state = {
       game: new Asteroids(),
-      pressedKeys: new Set()
+      pressedKeys: new Set(),
+      animationTriggered: false,
+      position: { x: 0, y: 0 }
     };
     this.divRef = React.createRef();
   }
@@ -38,6 +40,17 @@ class ReactAsteroids extends React.Component {
     // Remove event listeners when the component unmounts
     this.divRef.current.removeEventListener('keydown', this.handleKeyDown);
     this.divRef.current.removeEventListener('keyup', this.handleKeyUp);
+  }
+
+  triggerAnimation = (x, y) => {
+    this.setState({
+      animationTriggered: true,
+      position: { x, y }
+    });
+
+    setTimeout(() => {
+      this.setState({ animationTriggered: false });
+    }, 1000); 
   }
 
   handleKeyDown = (event) => {
@@ -64,14 +77,17 @@ class ReactAsteroids extends React.Component {
   startGame = () => {
     let startedGame = this.state.game;
     startedGame.startGame();
-    this.setState({ game: startedGame });
+    this.setState({ game: startedGame, position: {x: 0, y: 0} });
     const TICKS_PER_SECOND = 20;
     this.timer = setInterval(() => this.updateGame(), 1000 / TICKS_PER_SECOND);
   }
 
-  stopGame = () => {
+  stopGame = (died) => {
     let updatedGame = this.state.game;
     updatedGame.stopGame();
+    if (died) {
+      updatedGame.player.x = updatedGame.player.y = 0;
+    }
     this.setState({ game: updatedGame, character: "" });
     clearInterval(this.timer);
   }
@@ -80,7 +96,11 @@ class ReactAsteroids extends React.Component {
     let updatedGame = this.state.game;
     let alive = updatedGame.gameTick(this.state.pressedKeys);
     if (!alive) {
-      this.stopGame();
+      let coordinates = [updatedGame.player.x, updatedGame.player.y];
+      this.stopGame(true);
+      // Ending animation
+      this.triggerAnimation(coordinates[0], coordinates[1]);
+      // Play ending transition, not sure how it will work yet. Update state to wherever
       return;
     }
     this.setState({ game: updatedGame, character: "" });
@@ -98,11 +118,20 @@ class ReactAsteroids extends React.Component {
     }
     return(
       <div id='game' ref={this.divRef} tabIndex={0}>
-        <p id='score'>Score: {this.state.game.score}</p>
-        {game.started ? (<p id='stopGame' onClick={this.stopGame}>Stop Game</p>) : (<p id='startGame' onClick={this.startGame}>Start Game</p>)}
-        <GameObject class={"player"} object={game.player} character={"&#11165;"} />
+        <div id='infoArea'>
+          <p>Developed by <a href='https://codyhowell.dev'>Cody Howell</a></p>
+          <p>Use WASD and Spacebar</p>
+          <p>Score: {this.state.game.score} | Asteroids: {game.asteroids.length}</p>
+          {game.started ? (<p id='stopGame' onClick={this.stopGame}>Stop Game</p>) : (<p id='startGame' onClick={this.startGame}>Start Game</p>)}
+        </div>
+        <GameObject class={"player"} object={game.player} character={"player"} />
         {asteroids}
         {bullets}
+
+        <div
+          className={`animated-element ${this.state.animationTriggered ? 'animate' : ''}`}
+          style={{ top: this.state.position.y, left: this.state.position.x }}
+        />
         
       </div>
     )
