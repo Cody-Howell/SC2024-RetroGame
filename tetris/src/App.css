@@ -41,12 +41,67 @@ a {color: rgb(165, 43, 240);}
   border-radius: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+#tetrisInfo {
+  height: 610px;
+  width: 200px;
+  padding-left: 10px;
+  background-color: lightgray;
+  border-radius: 10px;
+}
+#tetrisInfo button {
+  margin-top: 5px;
+  padding: 3px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#numberArray {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding-right: 10px;
+  flex-wrap: wrap;
+}
+#numberArray p {
+  display: inline;
+  padding: 2px;
+  margin: 0;
+  border: 2px solid black;
+  cursor: pointer;
+}
+.selected {
+  background-color: rgb(78, 78, 78);
+  color: white;
 }
 
 #tetrisBoard {
   width: 310px;
-  height: 620px;
-  background-color: pink;
-  border: 5px solid gray;
+  height: 610px;
+  background-color: black;
+  border: 2px solid black;
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gameBoard {
+  background-color: white;
+  border-radius: 3px;
+}
+
+#tetrisNext {
+  /* padding-left: 3px; */
+  border-radius: 5px;
+}
+
+#leaderBoard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#leaderBoard p {
+  margin: 2px;
 }
