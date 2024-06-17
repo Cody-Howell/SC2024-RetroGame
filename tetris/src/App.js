@@ -59,8 +59,9 @@ class Tetris extends React.Component {
     this.divRef.current.addEventListener('keydown', this.handleKeyDown);
     this.divRef.current.addEventListener('keyup', this.handleKeyUp);
 
-    let scores = window.localStorage['tetrisScores'].split(',');
+    let scores = window.localStorage['tetrisScores'];
     if (scores){
+      scores = scores.split(',');
       this.setState({scores: scores});
     }
   }
